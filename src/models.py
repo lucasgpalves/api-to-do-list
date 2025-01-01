@@ -13,8 +13,8 @@ class Task(BaseModel):
     title: str = Field(..., description="Título da tarefa", max_length=255)
     description: Optional[str] = Field(None, description="Descrição opcional da tarefa")
     state: State = Field(..., description="Estado atual da tarefa")
-    created_at: datetime = Field(..., description="Data de criação da tarefa")
-    updated_at: datetime = Field(..., description="Data de última atualização")
+    created_at: datetime = Field(default_factory=datetime.now, description="Data de criação da tarefa")
+    updated_at: datetime = Field(default_factory=datetime.now, description="Data de última atualização")
 
     def atualizar_estado(self, new_state: State):
         self.state = new_state
