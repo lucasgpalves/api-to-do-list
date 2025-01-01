@@ -1,7 +1,7 @@
 """_summary_
 """
 from .connection_db import ConnectionDB
-from .queries import query_select_tasks
+from .queries import query_select_tasks, query_select_task_by_id
 from typing import List, Dict
 
 def make_connection():
@@ -15,6 +15,16 @@ def list_all_tasks() -> List[Dict]:
             data = query_select_tasks(cur)
             tasks = convert_data(data)
             return tasks
+    finally:
+        conn.close()
+        
+def list_task_by_id(id: int) -> Dict:
+    conn = make_connection()
+    try: 
+        with conn.cursor() as cur:
+            data = query_select_task_by_id(id)
+            task = convert_data(data)
+            return task
     finally:
         conn.close()
         
