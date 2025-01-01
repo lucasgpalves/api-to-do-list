@@ -6,12 +6,6 @@ class ConnectionDB:
     
     load_dotenv(dotenv_path='.env')
     
-    # print(f'DB_NAME={os.getenv("DB_NAME")}')
-    # print(f'DB_USER={os.getenv("DB_USER")}')
-    # print(f'DB_PASSWORD={os.getenv("DB_PASSWORD")}')
-    # print(f'DB_ADDRESS={os.getenv("DB_ADDRESS")}')
-    # print(f'DB_PORT={os.getenv("DB_PORT")}')
-    
     # Conexão ao banco de dados PostgreSQL
     def init_connection():
         try:

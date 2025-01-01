@@ -1,45 +1,40 @@
 """_summary_
 """
 from .connection_db import ConnectionDB
-from .queries import query_select_tasks, query_select_task_by_id
+from .queries import query_select_tasks, query_select_task_by_id, query_insert_task
 from typing import List, Dict
+from .models import Task, TaskCreate, TaskUpdate
+from psycopg2.extras import RealDictCursor
 
 def make_connection():
     conn = ConnectionDB.init_connection()
     return conn
 
-def list_all_tasks() -> List[Dict]:
+async def list_all_tasks() -> List[Dict]:
     conn = make_connection()
     try:
-        with conn.cursor() as cur:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
             data = query_select_tasks(cur)
-            tasks = convert_data(data)
-            return tasks
+            return data
     finally:
         conn.close()
         
-def list_task_by_id(id: int) -> Dict:
+async def list_task_by_id(id: int) -> Dict:
     conn = make_connection()
     try: 
-        with conn.cursor() as cur:
-            data = query_select_task_by_id(id)
-            task = convert_data(data)
-            return task
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            data = query_select_task_by_id(cur, id)
+            return data
     finally:
         conn.close()
         
-def convert_data(data):
-    # Formatar os dados para o formato desejado
-    tasks = []
-    for task in data:
-        formatted_task = {
-            "id": task[0],
-            "title": task[1],
-            "description": task[2],
-            "state": task[3],
-            "created_at": task[4],
-            "updated_at": task[5],
-        }
-        tasks.append(formatted_task)
+async def create_task(task: Task):
+    conn = make_connection()
+    try: 
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            data = query_insert_task(cur, task)
+            conn.commit()
+            return data
+    finally:
+        conn.close()
         
-    return tasks
