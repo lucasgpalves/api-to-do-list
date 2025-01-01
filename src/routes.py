@@ -1,7 +1,13 @@
 """_summary_
 """
 from fastapi import APIRouter
-from .services import list_all_tasks, list_task_by_id, create_task, update_task_by_id
+from .services import (
+    list_all_tasks, 
+    list_task_by_id, 
+    create_task, 
+    update_task_by_id,
+    remove_task_by_id
+)
 from .models import TaskCreate, TaskUpdate, Task
 from typing import List
 
@@ -22,3 +28,7 @@ async def post_new_task(task: TaskCreate):
 @router.put("/{id}", response_model=Task)
 async def put_task_by_id(id: int,task: TaskUpdate):
     return await update_task_by_id(id, task)
+
+@router.delete("/{id}", response_model=dict)
+async def delete_task_by_id(id: int):
+    return await remove_task_by_id(id)

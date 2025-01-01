@@ -1,11 +1,13 @@
 """_summary_
 """
+from fastapi import HTTPException
 from .connection_db import ConnectionDB
 from .queries import (
     query_select_tasks, 
     query_select_task_by_id, 
     query_insert_task,
-    query_update_task_by_id
+    query_update_task_by_id,
+    query_delete_task_by_id
 )
 from typing import List, Dict
 from .models import Task, TaskCreate, TaskUpdate
@@ -53,3 +55,14 @@ async def update_task_by_id(id: int, task: TaskUpdate):
     finally:
         conn.close()
         
+async def remove_task_by_id(id: int):
+    conn = make_connection()
+    try:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            task_deleted = query_delete_task_by_id(cur, id)
+            conn.commit()
+            if not task_deleted:
+                raise HTTPException(status_code=404, detail="Task not found")
+            return {"message": "Task deleted"}
+    finally:
+        conn.close()

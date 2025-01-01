@@ -70,3 +70,12 @@ def query_update_task_by_id(cur, id: int, task: TaskUpdate):
     )
     data = cur.fetchone()
     return data
+
+def query_delete_task_by_id(cur, id: int):
+    query = """
+    DELETE FROM public.tasks 
+    WHERE id = %s
+    RETURNING id
+    """
+    cur.execute(query, (id, ))
+    return cur.fetchone()
