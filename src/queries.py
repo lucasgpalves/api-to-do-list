@@ -8,6 +8,7 @@ def query_select_tasks(cur) -> List[Tuple]:
         id, title, description, state, created_at, updated_at
     FROM
         public.tasks
+    ORDER BY id
     """
     
     cur.execute(query)
@@ -41,6 +42,30 @@ def query_insert_task(cur, task: TaskCreate):
             task.state.value, 
             datetime.now().isoformat(), 
             datetime.now().isoformat()
+        )
+    )
+    data = cur.fetchone()
+    return data
+
+def query_update_task_by_id(cur, id: int, task: TaskUpdate):
+    query = """
+    UPDATE public.tasks 
+    SET title = %s, 
+        description = %s, 
+        state = %s, 
+        updated_at = %s
+    WHERE 
+        id = %s
+    RETURNING *
+    """
+    cur.execute(
+        query, 
+        (
+            task.title, 
+            task.description, 
+            task.state.value, 
+            datetime.now().isoformat(),
+            id
         )
     )
     data = cur.fetchone()

@@ -1,7 +1,12 @@
 """_summary_
 """
 from .connection_db import ConnectionDB
-from .queries import query_select_tasks, query_select_task_by_id, query_insert_task
+from .queries import (
+    query_select_tasks, 
+    query_select_task_by_id, 
+    query_insert_task,
+    query_update_task_by_id
+)
 from typing import List, Dict
 from .models import Task, TaskCreate, TaskUpdate
 from psycopg2.extras import RealDictCursor
@@ -33,6 +38,16 @@ async def create_task(task: Task):
     try: 
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
             data = query_insert_task(cur, task)
+            conn.commit()
+            return data
+    finally:
+        conn.close()
+        
+async def update_task_by_id(id: int, task: TaskUpdate):
+    conn = make_connection()
+    try: 
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            data = query_update_task_by_id(cur, id, task)
             conn.commit()
             return data
     finally:
