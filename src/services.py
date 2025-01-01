@@ -1,5 +1,6 @@
 """_summary_
 """
+from psycopg2.extras import RealDictCursor
 from fastapi import HTTPException
 from .connection_db import ConnectionDB
 from .queries import (
@@ -9,9 +10,9 @@ from .queries import (
     query_update_task_by_id,
     query_delete_task_by_id
 )
-from typing import List, Dict
 from .models import Task, TaskCreate, TaskUpdate
-from psycopg2.extras import RealDictCursor
+from .authentication import generate_jwt
+from typing import List, Dict
 
 def make_connection():
     conn = ConnectionDB.init_connection()
@@ -66,3 +67,6 @@ async def remove_task_by_id(id: int):
             return {"message": "Task deleted"}
     finally:
         conn.close()
+        
+# async def generate_token():
+#     return 

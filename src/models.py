@@ -25,7 +25,3 @@ class Task(BaseModel):
     state: State = Field(..., description="Estado atual da tarefa")
     created_at: datetime = Field(default_factory=datetime.now, description="Data de criação da tarefa")
     updated_at: datetime = Field(default_factory=datetime.now, description="Data de última atualização")
-
-    def atualizar_estado(self, new_state: State):
-        self.state = new_state
-        self.updated_at = datetime.now()
