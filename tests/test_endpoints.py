@@ -27,7 +27,7 @@ def test_get_task_by_id(auth_header):
     payload = {
         "title": "Teste",
         "description": "Realizar testes usando Pytest",
-        "state": "pendente"
+        "state": "PENDENTE"
     }
     create_response = client.post("/tasks", json=payload, headers=auth_header)
     task_id = create_response.json()["id"]
@@ -42,7 +42,7 @@ def test_create_task(auth_header):
     payload = {
         "title": "Teste",
         "description": "Realizar testes usando Pytest",
-        "state": "pendente"
+        "state": "PENDENTE"
     }
     
     response = client.post("/tasks", json=payload, headers=auth_header)
@@ -57,14 +57,14 @@ def test_update_task(auth_header):
     payload = {
         "title": "Teste para atualizar",
         "description": "Descrição do teste atualizada",
-        "state": "pendente"
+        "state": "PENDENTE"
     }
     create_response = client.post("/tasks", json=payload, headers=auth_header)
     task_id = create_response.json()["id"]
 
     update_payload = {
         "title": "Updated Test",
-        "state": "em andamento"
+        "state": "EM_ANDAMENTO"
     }
     response = client.put(f"/tasks/{task_id}", json=update_payload, headers=auth_header)
     assert response.status_code == 200
@@ -77,7 +77,7 @@ def test_delete_task(auth_header):
     payload = {
         "title": "Teste para deletar",
         "description": "Descrição do teste para deletar",
-        "state": "pendente"
+        "state": "PENDENTE"
     }
     create_response = client.post("/tasks", json=payload, headers=auth_header)
     task_id = create_response.json()["id"]

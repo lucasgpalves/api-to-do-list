@@ -1,12 +1,16 @@
-from enum import Enum
 from typing import Optional
+from sqlalchemy import Column, Integer, String, TIMESTAMP
+from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
+from enum import Enum as PyEnum
 from pydantic import BaseModel, Field
 
-class State(str, Enum):
-    PENDENTE = "pendente"
-    EM_ANDAMENTO = "em andamento"
-    CONCLUIDA = "concluída"
+Base = declarative_base()
+
+class State(str, PyEnum):
+    PENDENTE = "PENDENTE"
+    EM_ANDAMENTO = "EM_ANDAMENTO"
+    CONCLUIDA = "CONCLUIDA"
     
 class TaskCreate(BaseModel):
     title: str = Field(..., description="Título da tarefa", max_length=255)
@@ -18,10 +22,20 @@ class TaskUpdate(BaseModel):
     description: Optional[str] = Field(None, description="Descrição opcional da tarefa")
     state: Optional[State] = Field(None, description="Estado atual da tarefa")
 
-class Task(BaseModel):
-    id: Optional[int] = Field(default=None, description="ID autoincrementado da tarefa")
-    title: str = Field(..., description="Título da tarefa", max_length=255)
+class TaskResponse(BaseModel):
+    id: Optional[int] = Field(None, description="Id tarefa")
+    title: Optional[str] = Field(None, description="Título da tarefa", max_length=255)
     description: Optional[str] = Field(None, description="Descrição opcional da tarefa")
-    state: State = Field(..., description="Estado atual da tarefa")
-    created_at: datetime = Field(default_factory=datetime.now, description="Data de criação da tarefa")
-    updated_at: datetime = Field(default_factory=datetime.now, description="Data de última atualização")
+    state: Optional[State] = Field(None, description="Estado atual da tarefa")
+    created_at: Optional[datetime] = Field(None, description="Estado atual da tarefa")
+    updated_at: Optional[datetime] = Field(None, description="Estado atual da tarefa")
+
+class Task(Base):
+    __tablename__ = 'tasks'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String(255), nullable=False)
+    description = Column(String, nullable=True)
+    state = Column(String, nullable=False)
+    created_at = Column(TIMESTAMP, default=datetime.now)
+    updated_at = Column(TIMESTAMP, default=datetime.now, onupdate=datetime.now)

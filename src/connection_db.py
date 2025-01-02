@@ -1,23 +1,41 @@
 import os
-import psycopg2
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 
 class ConnectionDB:
-    
+
+    # Carrega as variáveis de ambiente do arquivo .env
     load_dotenv(dotenv_path='.env')
-    
-    # Conexão ao banco de dados PostgreSQL
+
+    # Criação da conexão usando SQLAlchemy
+    @staticmethod
     def init_connection():
         try:
-            print("Connection established")
-            return psycopg2.connect(
-                database=os.getenv("DB_NAME"),
-                user=os.getenv("DB_USER"),
-                password=os.getenv("DB_PASSWORD"),
-                host=os.getenv("DB_ADDRESS"),
-                port=os.getenv("DB_PORT"),
-                client_encoding="UTF8"
+            # Monta a URL de conexão ao banco
+            db_url = (
+                f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}"
+                f"@{os.getenv('DB_ADDRESS')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
             )
+            
+            # Cria o engine do SQLAlchemy
+            engine = create_engine(db_url, echo=True)  # echo=True exibe as queries no log
+
+            # Configura a sessão
+            Session = sessionmaker(bind=engine)
+
+            print("Connection established")
+            return Session
         except Exception as e:
             print(f"Connection cannot be established: {e}")
-            exit(1)  # Encerra o programa se a conexão falhar
+            exit(1)
+            
+        
+    @staticmethod
+    def get_session():
+        Session = ConnectionDB.init_connection()
+        session = Session()
+        try:
+            yield session
+        finally:
+            session.close()

@@ -1,8 +1,7 @@
 """_summary_
 """
-from psycopg2.extras import RealDictCursor
-from fastapi import HTTPException
-from .connection_db import ConnectionDB
+from fastapi import Depends, HTTPException
+from sqlalchemy.orm import Session
 from .queries import (
     query_select_tasks, 
     query_select_task_by_id, 
@@ -11,64 +10,33 @@ from .queries import (
     query_delete_task_by_id
 )
 from .models import Task, TaskCreate, TaskUpdate
-from .authentication import generate_jwt
 from typing import List, Dict
 
-def make_connection():
-    conn = ConnectionDB.init_connection()
-    return conn
-
-async def list_all_tasks() -> List[Dict]:
-    conn = make_connection()
+async def list_all_tasks(session: Session) -> List[Dict]:
     try:
-        with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            data = query_select_tasks(cur)
-            return data
+        data = query_select_tasks(session)
+        return data
     finally:
-        conn.close()
+        session.close()
         
-async def list_task_by_id(id: int) -> Dict:
-    conn = make_connection()
-    try: 
-        with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            data = query_select_task_by_id(cur, id)
-            if not data:
-                raise HTTPException(status_code=404, detail="Task not found")
-            return data
-    finally:
-        conn.close()
+async def list_task_by_id(session: Session, id: int) -> Dict:
+    data = query_select_task_by_id(session, id)
+    if not data:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return data
         
-async def create_task(task: Task):
-    conn = make_connection()
-    try: 
-        with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            data = query_insert_task(cur, task)
-            conn.commit()
-            return data
-    finally:
-        conn.close()
+async def create_task(session: Session, task: TaskCreate):
+    data = query_insert_task(session, task)
+    return data
         
-async def update_task_by_id(id: int, task: TaskUpdate):
-    conn = make_connection()
-    try: 
-        with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            data = query_update_task_by_id(cur, id, task)
-            conn.commit()
-            return data
-    finally:
-        conn.close()
+async def update_task_by_id(session: Session, id: int, task: TaskUpdate):
+    data = query_update_task_by_id(session, id, task)
+    if not data:
+        raise HTTPException(status_code=404, detail=f"Task not found {data}")
+    return data
         
-async def remove_task_by_id(id: int):
-    conn = make_connection()
-    try:
-        with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            task_deleted = query_delete_task_by_id(cur, id)
-            conn.commit()
-            if not task_deleted:
-                raise HTTPException(status_code=404, detail="Task not found")
-            return {"message": "Task deleted"}
-    finally:
-        conn.close()
-        
-# async def generate_token():
-#     return 
+async def remove_task_by_id(session: Session, id: int):
+    data = query_delete_task_by_id(session, id)
+    if not data:
+        raise HTTPException(status_code=404, detail=f"Task not found {data}")
+    return {"message": "Task deleted"}
