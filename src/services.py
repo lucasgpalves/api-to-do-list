@@ -32,6 +32,8 @@ async def list_task_by_id(id: int) -> Dict:
     try: 
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
             data = query_select_task_by_id(cur, id)
+            if not data:
+                raise HTTPException(status_code=404, detail="Task not found")
             return data
     finally:
         conn.close()
