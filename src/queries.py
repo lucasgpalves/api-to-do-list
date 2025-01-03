@@ -48,6 +48,6 @@ def query_delete_task_by_id(session: Session, id: int):
         session.delete(task_to_delete)
         session.commit()
 
-        return {'id': id}
+        return 1
     
     return None

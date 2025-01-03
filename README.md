@@ -28,7 +28,7 @@ Liste as principais funcionalidades do projeto. Exemplos:
 - [Pydantic](https://docs.pydantic.dev/latest/)
 - [JWT](https://pyjwt.readthedocs.io/en/stable/)
 
-## Instalação
+## Instalação e Configuração
 
 Instruções para instalar o projeto e suas dependências. Exemplo:
 
@@ -45,6 +45,27 @@ Instruções para instalar o projeto e suas dependências. Exemplo:
 3. Instale as dependências:
     ```bash
     pip install -r requirements.txt
+    ```
+
+4. Acesse o seu sistema gerenciador de banco de dados e crie um SCHEMA ou DATABASE:
+    ```sql
+    CREATE DATABASE nome_database;
+    ```
+
+5. Configure seu `.env` conforme o [`.env.example`](.env.example):
+    ```bash
+    DB_NAME="database_name_here"
+    DB_USER="user_here"
+    DB_PASSWORD="password_here"
+    DB_ADDRESS="127.0.0.1"
+    DB_PORT="5432"
+
+    SECRET_KEY="your_secret_key"
+    ```
+
+6. Realize as migrations do projeto:
+    ```bash
+    alembic upgrade head
     ```
 
 ## Uso
@@ -74,7 +95,7 @@ curl --request POST \
   --data '{
 	"title": "Teste",
 	"description": "Teste",
-	"state": "pendente"
+	"state": "PENDENTE"
 }'
 ```
 - PUT `http://localhost:8000/tasks/{id}`
@@ -87,7 +108,7 @@ curl --request PUT \
   --data '{
 	"title": "Teste",
 	"description": "Teste",
-	"state": "pendente"
+	"state": "EM_ANDAMENTO"
 }'
 ```
 - DELETE `http://localhost:8000/tasks/{id}`
