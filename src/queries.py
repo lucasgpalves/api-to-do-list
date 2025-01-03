@@ -13,6 +13,15 @@ def query_select_task_by_id(session: Session, id: int) -> Optional[Tuple]:
     data = session.query(Task).filter(Task.id == id).first()
     return data
 
+def query_select_task_by_state(session: Session, state: str) -> Optional[List[Tuple]]:
+    query = select(Task).filter(Task.state == state)
+    data = session.execute(query).scalars().all()
+    return data
+
+def query_paginate_task(session: Session, skip: int = 0, limit: int = 10) -> Optional[List[Tuple]]:
+    data = session.query(Task).offset(skip).limit(limit).all()
+    return data
+
 def query_insert_task(session: Session, task: TaskCreate) -> tuple:
     new_task = Task(
         title=task.title,
