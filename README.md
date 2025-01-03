@@ -85,6 +85,8 @@ Instruções para usar o projeto. Exemplos:
 ### Task
 - GET `http://localhost:8000/tasks`
 - GET `http://localhost:8000/tasks/{id}`
+- GET `http://localhost:8000/tasks/state/{id}`
+- GET `http://localhost:8000/tasks/?skip=0&limit=10`
 - POST `http://localhost:8000/tasks/{id}`
 ```bash
 curl --request POST \
