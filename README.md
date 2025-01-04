@@ -9,6 +9,7 @@ Uma API para gerenciamento de tarefas.
 - [Tecnologias Usadas](#tecnologias-usadas)
 - [Instalação](#instalacao)
 - [Uso](#uso)
+- [Endpoints](#endpoints)
 
 ## Sobre
 
